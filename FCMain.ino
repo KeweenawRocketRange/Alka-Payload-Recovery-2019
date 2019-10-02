@@ -9,6 +9,10 @@
   const int ACCEL_2 = 0b00000000;
   const int PWR_MGMT_1 = 0x6B;
 
+  int sampleRate = 50;  //Interval at which average is calculated
+  float maxAlt;         //Max altitude measured
+  int count = 0;
+
   float AcX;
   float AcY;
   float AcZ;
@@ -44,7 +48,16 @@ void setup() {
 void loop(){
 
   retrieveDataMPU();
-  //retrieveDataBMP();
+  retrieveDataBMP();
+
+  count++;
+  calcMaxAlt();
+  if(count == sampleRate){
+    detectApogee();
+    count = 0;
+  }
+  
+
 
 }
 
@@ -77,5 +90,33 @@ void retrieveDataBMP(){
    Serial.println(" meters");
    Serial.println();
 
+}
 
+boolean detectApogee(){
+
+  if(bmp.readAltitude(101500) < maxAlt){
+
+    sampleRate = 10;
+    return(true);
+    
+  }
+
+  return(false);
+
+}
+
+void calcMaxAlt(){
+
+  float currentAlt = bmp.readAltitude(101500);
+
+  if(currentAlt > maxAlt){
+
+    maxAlt = currentAlt;
+    
+  }
+  
+}
+
+void calcAvg(){
+  
 }
