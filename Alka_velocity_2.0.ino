@@ -1,0 +1,75 @@
+/*
+   The purpose of this program is to determine the speed of the rocket at launch.
+   The program will trip a timer once the first IR recerver loses it's signal.
+   The timer will end once the second reciever is tripped.
+   The speed will be calculated by dividing the known distance of the recievers by the time.
+*/
+
+
+
+/*
+   This Section defines the pins the arduino will use to read the
+   sensors.
+   At least 2 will be used, but 4 would be best for redundancy.
+*/
+
+#include <SD.h>
+
+File file;
+
+const int blinkPin = 28;
+const int inPin1 = 30;
+const int inPin2 = 34;
+const int inPin3 = 38;
+const int inPin4 = 42;
+const int hdwrSS = 53;
+float time1 = 0;
+float time2 = 0;
+float time3 = 0;
+float time4 = 0;
+float velocity = 0;
+//Length of rocket in meters. We live in a society
+const int rocketLength = 20;
+
+
+
+void setup() {
+  Serial.begin(9600); //edit to maximize refresh rate
+  
+  pinMode((inPin1, inPin2, inPin3, inPin4), INPUT);
+
+  pinMode((blinkPin, hdwrSS), OUTPUT);
+
+  //if the sd card doesn't work: blink 8 times
+  if (!SD.begin(hdwrSS)) {
+    for (int i = 0; i < 7; i++) {
+      digitalWrite(blinkPin, HIGH);
+      delay(500);
+      digitalWrite(blinkPin, LOW);
+    }
+    return;
+  }
+
+}
+
+
+void loop() {
+  // put your main code here, to run repeatedly:
+
+
+
+file=SD.open("velocity.txt",FILE_WRITE);
+Serial.print("Velocity: ");
+Serial.print(velocity);
+Serial.println(" m/s");
+
+//debugging, remove for final delivery
+Serial.print("Time 1: ");
+Serial.println(time1);
+Serial.print("Time 2: ");
+Serial.println(time2);
+Serial.print("Rocket length: ");
+Serial.print(rocketLength);
+Serial.println(" m");
+file.close();
+}
