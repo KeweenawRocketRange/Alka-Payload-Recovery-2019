@@ -37,7 +37,7 @@
   float maxAlt;                       //Max altitude measured
 
   float AcX;
-  float last3AcX[3];                // last 10 measurements of AcX
+  float last3AcX = 0;                // last 10 measurements of AcX
   float avgAcX;                       // average of the last 50 values
   float thresholdG = 2;               // the threshold g force for detecting launch, should be set to 5
   float AcY;                          //Acceleration in Y direction
@@ -294,24 +294,10 @@ bool isFalling(){
 //******************************************************************************
 
 void calcAvg(){
-  int size  = 2;
-  Serial.print("Size: ");
-  Serial.println(size);
   avgAcX = 0.0;
-  Serial.print("Last 3 elements: ");
-  for(int i = 0; i < size; i ++){ // shifts the values down by one
-    last3AcX[i]=last3AcX[i +1];
-    Serial.print(i);
-    Serial.print(": ");
-    Serial.print(last3AcX[i]);
-    Serial.print("   ");
-  }
-  last3AcX[size] = AcX /2048; // adds most recent value 
-  Serial.println(last3AcX[size]);
-  for (int i = 0; i < size; i++){ // calculates average
-    avgAcX = avgAcX + last3AcX[i];
-  }
-  avgAcX = avgAcX/3.0;
+  last3AcX = AcX /2048; // adds most recent value 
+  avgAcX = avgAcX + last3AcX;
+  avgAcX = avgAcX/1.0;
   Serial.print("Average: ");
   Serial.println(avgAcX);
 }
